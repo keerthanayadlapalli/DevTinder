@@ -1,19 +1,16 @@
 const express = require('express');
 const app =express();
-const {adminAuth,userAuth}=require('../middlewares/auth.js');
-app.use("/admin",adminAuth);
-app.delete("/admin/deleteAdmin",(req,res)=>{
-    res.send("Admin Deleted Successfully");
-});
-app.get("/admin/getAllData",(req,res)=>{
-    res.send("Hello from DevTinder Admin Panel");;
-});
-app.use("/user/data",userAuth,(req,res)=>{
-    res.send("user data sent successfully");
-});
-app.use("/user/login",(req,res)=>{
-    res.send("user logged in Successfully");
-});
+app.use("/getUserData",(req,res)=>{
+    try{
+        //logic to DB call and get user data
+        throw new Error("DB connection failed");
+        res.send("User Data sent successfully");
+        
+    }
+    catch(err){
+        res.status(500).send("something went wrong");
+    }
+})
 
 app.listen(7777,()=>{
     console.log('Server is running on port 7777');
