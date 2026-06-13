@@ -21,9 +21,33 @@ connectDB().then(()=>{
     console.log('Server is running on port 7777');
 }); 
 })
-.catch((err=>{
+.catch((err) => {
     console.log("DB connection failed");
-}));
+    console.log(err);
+});
+//get user by email id
+app.get("/user",async(req,res)=>{
+    const userEmail = req.body.emailId;
+    console.log(userEmail);
+    try{
+         const user = await User.find({emailId : userEmail});
+         res.send(user);
+    }
+    catch(err){
+        res.status(400).send("something went wrong");
+    }
+
+});
+//getting all the users
+app.get("/feed",async(req,res)=>{
+    try{
+        const users = await User.find({});
+        res.send(users); 
+    }
+    catch(err){
+        res.status(400).send("something went wrong");
+    }
+})
 
 
 
