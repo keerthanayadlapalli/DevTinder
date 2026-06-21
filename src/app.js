@@ -4,7 +4,11 @@ const app =express();
 const User = require('./models/user');
 const {validateSignupData} = require('./utils/validation');
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+app.use(cookieParser());
 app.use(express.json());
+
 //Signup a user
 app.post('/signup',async(req,res)=>{
     try{
@@ -25,6 +29,29 @@ app.post('/signup',async(req,res)=>{
 
 
 });
+//Get Profile of a user
+app.get('/profile',async(req,res)=>{
+    try{
+        const cookies = req.cookies;
+        const {Token} = cookies;
+        if(!Token){
+            throw new Error("Invalid token");
+        }
+        const decodedmessage = jwt.verify(Token,'Keerthana@123');  
+        const {userId} = decodedmessage;
+        console.log("logged user is :"+ userId);
+        const user = await User.findById(userId);
+        if(!user){
+            throw new Error("User not found");
+        }
+        res.send(user);
+    }
+        catch(err){
+            res.status(400).send("ERROR: " + err.message);
+        }
+    
+
+})
 //Login a user
 app.post('/login',async(req,res)=>{
     try{
@@ -35,6 +62,8 @@ app.post('/login',async(req,res)=>{
          }
          const isPasswordValid = await bcrypt.compare(password,user.password);
          if(isPasswordValid){
+            const token = jwt.sign({userId:user._id},'Keerthana@123');
+            res.cookie("Token",token);
             res.send("Login successful");
          }
          else{
@@ -116,6 +145,7 @@ app.patch("/user/:userId",async(req,res)=>{
         res.status(400).send(err.message);
     }
 });
+//""
 
 
 
