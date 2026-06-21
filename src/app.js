@@ -6,6 +6,7 @@ const {validateSignupData} = require('./utils/validation');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const {userAuth} = require('../middlewares/Auth');
 app.use(cookieParser());
 app.use(express.json());
 
@@ -30,27 +31,20 @@ app.post('/signup',async(req,res)=>{
 
 });
 //Get Profile of a user
-app.get('/profile',async(req,res)=>{
+app.get('/profile',userAuth,async(req,res)=>{
     try{
-        const cookies = req.cookies;
-        const {Token} = cookies;
-        if(!Token){
-            throw new Error("Invalid token");
-        }
-        const decodedmessage = jwt.verify(Token,'Keerthana@123');  
-        const {userId} = decodedmessage;
-        console.log("logged user is :"+ userId);
-        const user = await User.findById(userId);
-        if(!user){
-            throw new Error("User not found");
-        }
+        const user = req.user;
         res.send(user);
     }
         catch(err){
             res.status(400).send("ERROR: " + err.message);
         }
-    
-
+})
+//sending connection request
+app.post('/sendConnectionRequest',userAuth,async(req,res)=>{
+    const user = req.user;
+    console.log("request sent");
+    res.send(user.firstName + " sent the request successfully");
 })
 //Login a user
 app.post('/login',async(req,res)=>{
@@ -62,8 +56,8 @@ app.post('/login',async(req,res)=>{
          }
          const isPasswordValid = await bcrypt.compare(password,user.password);
          if(isPasswordValid){
-            const token = jwt.sign({userId:user._id},'Keerthana@123');
-            res.cookie("Token",token);
+            const token = jwt.sign({userId:user._id},'Keerthana@123',{expiresIn : '1d'} );
+            res.cookie("Token",token,{expires : new Date(Date.now()+ 8 *3600000)});
             res.send("Login successful");
          }
          else{
