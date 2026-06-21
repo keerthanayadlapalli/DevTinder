@@ -54,9 +54,9 @@ app.post('/login',async(req,res)=>{
          if(!user){
             throw new Error("Invalid credentials");
          }
-         const isPasswordValid = await bcrypt.compare(password,user.password);
+         const isPasswordValid = await user.validatePassword(password);
          if(isPasswordValid){
-            const token = jwt.sign({userId:user._id},'Keerthana@123',{expiresIn : '1d'} );
+            const token = await user.getJWT();
             res.cookie("Token",token,{expires : new Date(Date.now()+ 8 *3600000)});
             res.send("Login successful");
          }
@@ -125,7 +125,7 @@ app.patch("/user/:userId",async(req,res)=>{
     if(!isUpdateAllowed){
         throw new Error("Update not allowed");
     }
-    if(data?.skills.length >10){
+    if(data?.skills?.length >10){
         throw new Error("skills cannot be more than 10");
     }
         const user = await User.findByIdAndUpdate({_id : userId},data,
@@ -139,7 +139,7 @@ app.patch("/user/:userId",async(req,res)=>{
         res.status(400).send(err.message);
     }
 });
-//""
+
 
 
 
