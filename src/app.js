@@ -1,17 +1,16 @@
 const express = require('express');
 const connectDB = require('./config/database');
-const app =express();
-const User = require('./models/user');
-const {validateSignupData} = require('./utils/validation');
-const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
-const {userAuth} = require('./middlewares/auth');
+
+const app =express();
+
 const authRouter = require('./Routes/Auth');
 const profileRouter = require('./Routes/Profile');
 const requestRouter = require('./Routes/requests');
+
 app.use(cookieParser());
 app.use(express.json());
+
 app.use('/',authRouter);
 app.use('/',profileRouter);
 app.use('/',requestRouter);
