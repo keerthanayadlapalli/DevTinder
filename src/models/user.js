@@ -33,13 +33,11 @@ const userSchema = new  mongoose.Schema({
         type:Number,
     },
     gender:{
-        type:String,
-        validate(value){
-            if(!["male","female","others"].includes(value)){
-                throw new Error("invalid gender value:" + value);
-
-            }
-        }
+        type: String,
+        enum: {
+            values :["male","female","other"],
+            message : `{value} is not supported`
+        } 
     },
     about:{
         type:String,
