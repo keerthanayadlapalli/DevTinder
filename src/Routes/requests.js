@@ -2,7 +2,7 @@ const express = require('express');
 const requestRouter = express.Router();
 const{userAuth} = require('../middlewares/auth');
 const ConnectionRequest = require ('../models/connectionRequest');
-const User = require('../models/user');
+const User = require('../models/user1');
 //sending connection request
 requestRouter.post('/request/send/:status/:toUserId',userAuth,async(req,res)=>{
     try{
@@ -47,10 +47,12 @@ requestRouter.post('/request/send/:status/:toUserId',userAuth,async(req,res)=>{
         })
     }
     catch(err){
+         console.error(err);
         res.status(400).send("ERROR : " + err.message);
     }
 
 });
+//Find that pending connection request and change its status.
 requestRouter.post('/request/review/:status/:requestId',userAuth,async(req,res)=>{
     try{
         const loggedinUser = req.user;

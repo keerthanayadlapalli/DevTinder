@@ -3,10 +3,10 @@ const connectDB = require('./config/database');
 const cookieParser = require('cookie-parser');
 
 const app =express();
-
 const authRouter = require('./Routes/Auth');
 const profileRouter = require('./Routes/Profile');
 const requestRouter = require('./Routes/requests');
+const userRouter = require('./Routes/user');
 
 app.use(cookieParser());
 app.use(express.json());
@@ -14,6 +14,7 @@ app.use(express.json());
 app.use('/',authRouter);
 app.use('/',profileRouter);
 app.use('/',requestRouter);
+app.use('/',userRouter);
 
 connectDB().then(()=>{
     console.log("DB connected successfully");
