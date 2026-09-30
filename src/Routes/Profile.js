@@ -13,6 +13,7 @@ profileRouter.get('/profile/view',userAuth,async(req,res)=>{
             res.status(400).send("ERROR: " + err.message);
         }
 })
+//Edit Profile of a user
 profileRouter.patch('/profile/edit',userAuth,async(req,res)=>{
     try{
         if(!validateProfileEditData(req)){
